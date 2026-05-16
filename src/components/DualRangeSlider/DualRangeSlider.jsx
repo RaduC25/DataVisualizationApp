@@ -6,21 +6,17 @@ const DualRangeSlider = ({ label, min, max, valueMin, valueMax, onChangeMin, onC
   const pctMax = max > min ? ((valueMax - min) / (max - min)) * 100 : 100;
   const step = Math.max(1, Math.ceil((max - min) / 1000));
 
-  // Local text state for the editable inputs
   const [minText, setMinText] = useState(formatValue(valueMin));
   const [maxText, setMaxText] = useState(formatValue(valueMax));
   const [minFocused, setMinFocused] = useState(false);
   const [maxFocused, setMaxFocused] = useState(false);
 
-  // Keep display in sync when slider thumb moves
   useEffect(() => { if (!minFocused) setMinText(formatValue(valueMin)); }, [valueMin, minFocused]);
   useEffect(() => { if (!maxFocused) setMaxText(formatValue(valueMax)); }, [valueMax, maxFocused]);
 
-  /* ── Slider handlers ── */
   const handleMinSlider = (e) => onChangeMin(Math.min(Number(e.target.value), valueMax - step));
   const handleMaxSlider = (e) => onChangeMax(Math.max(Number(e.target.value), valueMin + step));
 
-  /* ── Text input handlers ── */
   const handleMinFocus = () => { setMinFocused(true); setMinText(String(valueMin)); };
   const handleMaxFocus = () => { setMaxFocused(true); setMaxText(String(valueMax)); };
 
@@ -30,7 +26,7 @@ const DualRangeSlider = ({ label, min, max, valueMin, valueMax, onChangeMin, onC
     if (!isNaN(val) && val >= min && val < valueMax) {
       onChangeMin(val);
     } else {
-      setMinText(formatValue(valueMin)); // revert if invalid
+      setMinText(formatValue(valueMin));
     }
   };
 
@@ -40,7 +36,7 @@ const DualRangeSlider = ({ label, min, max, valueMin, valueMax, onChangeMin, onC
     if (!isNaN(val) && val <= max && val > valueMin) {
       onChangeMax(val);
     } else {
-      setMaxText(formatValue(valueMax)); // revert if invalid
+      setMaxText(formatValue(valueMax));
     }
   };
 
