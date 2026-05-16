@@ -97,7 +97,7 @@ function App() {
 
           <div className="chart-container">
             <h3>Population Density Trend</h3>
-            <PopulationDensityLine countries={countries} />
+            <PopulationDensityLine countries={countries} regionColors={REGION_COLORS} />
           </div>
         </div>
       </section>
