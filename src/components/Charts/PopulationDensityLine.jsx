@@ -12,16 +12,7 @@ import {
   Filler
 } from 'chart.js';
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend,
-  Filler
-);
+ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler);
 
 const btnStyle = (active) => ({
   padding: '5px 14px',
@@ -40,9 +31,8 @@ const btnStyle = (active) => ({
 const PopulationDensityLine = ({ countries, regionColors }) => {
   const [selectedRegion, setSelectedRegion] = useState('all');
 
-  // Filter out countries with zero or very small area
   const validCountries = useMemo(() =>
-    countries.filter(c => c.area > 1 && c.population > 0),
+    countries.filter(c => c.area > 1 && c.population > 0 && parseFloat(c.populationDensity) > 0),
     [countries]
   );
 
@@ -58,45 +48,38 @@ const PopulationDensityLine = ({ countries, regionColors }) => {
     [validCountries, selectedRegion]
   );
 
-  // Sort by density, take top 50 for global or all for a region
-  const sortedByDensity = useMemo(() => {
-    const sorted = [...filteredCountries].sort(
-      (a, b) => parseFloat(b.populationDensity) - parseFloat(a.populationDensity)
+  // Ascending sort: low density → high density (left to right)
+  const sorted = useMemo(() => {
+    const s = [...filteredCountries].sort(
+      (a, b) => parseFloat(a.populationDensity) - parseFloat(b.populationDensity)
     );
-    return selectedRegion === 'all' ? sorted.slice(0, 50) : sorted;
+    return selectedRegion === 'all' ? s.slice(-50) : s;
   }, [filteredCountries, selectedRegion]);
 
-  // Pick the line color from regionColors prop if a region is selected
   const lineColor = selectedRegion === 'all'
     ? 'rgba(59, 130, 246, 1)'
     : (regionColors?.[selectedRegion]?.border ?? 'rgba(59, 130, 246, 1)');
 
   const fillColor = selectedRegion === 'all'
-    ? 'rgba(59, 130, 246, 0.15)'
-    : (regionColors?.[selectedRegion]?.bg?.replace('0.6', '0.15') ?? 'rgba(59, 130, 246, 0.15)');
-
-  const xAxisLabel = selectedRegion === 'all'
-    ? 'Countries (Top 50 by Density)'
-    : `${selectedRegion} Countries (sorted by density)`;
+    ? 'rgba(59, 130, 246, 0.12)'
+    : (regionColors?.[selectedRegion]?.bg?.replace('0.6', '0.12') ?? 'rgba(59, 130, 246, 0.12)');
 
   const data = {
-    labels: sortedByDensity.map(c => c.name),
-    datasets: [
-      {
-        label: 'Population Density (people per km²)',
-        data: sortedByDensity.map(c => parseFloat(c.populationDensity)),
-        borderColor: lineColor,
-        backgroundColor: fillColor,
-        borderWidth: 2,
-        fill: true,
-        tension: 0.4,
-        pointRadius: 4,
-        pointHoverRadius: 7,
-        pointBackgroundColor: lineColor,
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2
-      }
-    ]
+    labels: sorted.map(c => c.name),
+    datasets: [{
+      label: 'Population Density (people/km²)',
+      data: sorted.map(c => parseFloat(c.populationDensity)),
+      borderColor: lineColor,
+      backgroundColor: fillColor,
+      borderWidth: 2,
+      fill: true,
+      tension: 0.3,
+      pointRadius: 3,
+      pointHoverRadius: 7,
+      pointBackgroundColor: lineColor,
+      pointBorderColor: '#1e293b',
+      pointBorderWidth: 1.5
+    }]
   };
 
   const options = {
@@ -107,18 +90,17 @@ const PopulationDensityLine = ({ countries, regionColors }) => {
       legend: {
         display: true,
         position: 'top',
-        labels: { color: '#f1f5f9', font: { size: 12 } }
+        labels: { color: '#f1f5f9', font: { size: 12 }, usePointStyle: true }
       },
-      title: { display: false },
       tooltip: {
         callbacks: {
-          title: (items) => sortedByDensity[items[0].dataIndex]?.name ?? '',
-          label: (context) => {
-            const country = sortedByDensity[context.dataIndex];
+          title: (items) => sorted[items[0].dataIndex]?.name ?? '',
+          label: (ctx) => {
+            const c = sorted[ctx.dataIndex];
             return [
-              `Density: ${context.parsed.y.toFixed(2)} people/km²`,
-              `Population: ${country.population.toLocaleString()}`,
-              `Area: ${country.area.toLocaleString()} km²`
+              `Density: ${ctx.parsed.y.toFixed(2)} people/km²`,
+              `Population: ${c.population.toLocaleString()}`,
+              `Area: ${c.area.toLocaleString()} km²`
             ];
           }
         }
@@ -126,27 +108,23 @@ const PopulationDensityLine = ({ countries, regionColors }) => {
     },
     scales: {
       x: {
-        display: true,
         title: {
           display: true,
-          text: xAxisLabel,
-          font: { size: 13, weight: 'bold' },
-          color: '#f1f5f9'
+          text: selectedRegion === 'all'
+            ? 'Countries (top 50 by density, low → high)'
+            : `${selectedRegion} countries (low → high density)`,
+          color: '#f1f5f9',
+          font: { size: 13, weight: 'bold' }
         },
-        ticks: { display: false, color: '#94a3b8' },
+        ticks: { display: false },
         grid: { display: false }
       },
       y: {
-        display: true,
-        title: {
-          display: true,
-          text: 'Population Density (people per km²)',
-          font: { size: 13, weight: 'bold' },
-          color: '#f1f5f9'
-        },
+        type: 'linear',
+        title: { display: false },
         ticks: {
           color: '#94a3b8',
-          callback: (value) => value >= 1000 ? (value / 1000).toFixed(1) + 'K' : value.toFixed(0)
+          callback: (v) => v >= 1000 ? (v / 1000).toFixed(1) + 'K' : v
         },
         grid: { color: 'rgba(148, 163, 184, 0.1)' }
       }
@@ -156,23 +134,17 @@ const PopulationDensityLine = ({ countries, regionColors }) => {
 
   return (
     <div>
-      {/* Region filter buttons */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginBottom: '14px' }}>
         {regions.map(r => (
-          <button
-            key={r}
-            onClick={() => setSelectedRegion(r)}
-            style={btnStyle(selectedRegion === r)}
-          >
+          <button key={r} onClick={() => setSelectedRegion(r)} style={btnStyle(selectedRegion === r)}>
             {r === 'all' ? 'All regions' : r}
           </button>
         ))}
       </div>
 
-      {/* Country count info */}
       <div style={{ color: '#475569', fontSize: '0.75rem', marginBottom: '8px' }}>
-        Showing {sortedByDensity.length} countries
-        {selectedRegion === 'all' ? ' (top 50 globally by density)' : ` in ${selectedRegion} sorted by density`}
+        Showing {sorted.length} countries
+        {selectedRegion === 'all' ? ' (top 50 globally by density)' : ` in ${selectedRegion}`}
       </div>
 
       <div style={{ height: '420px' }}>

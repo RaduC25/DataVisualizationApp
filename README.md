@@ -6,13 +6,17 @@ An interactive web application built with React and Chart.js that visualizes glo
 
 - **Real-time Data Fetching**: Pulls live data from the REST Countries API
 - **Interactive Charts**:
-  - Bar Chart: Top 10 most populated countries
-  - Pie Chart: Distribution of countries by region
-  - Scatter Plot: Population vs Area analysis with color-coded regions
-- **Data Table**:
-  - Search countries by name
+  - Bar Chart: Top 10 most populated countries, filterable by region
+  - Pie Chart: Distribution of countries by region, population, or area
+  - Scatter Plot: Population vs Area with region filters and a custom zoom slider
+  - Line Chart: Population density trend across countries, filterable by region
+- **Data Grid**:
+  - Real-time search by country name
   - Filter by region
-  - View detailed country information (population, area, density)
+  - Dual range sliders for Population and Area ranges
+  - Multi-directional sorting (Name, Population, Area, Density)
+  - Load More pagination
+- **Consistent Color Scheme**: All charts share a unified region color palette defined in `App.jsx`
 - **Responsive Design**: Works seamlessly on desktop, tablet, and mobile devices
 - **Summary Statistics**: Quick overview of total countries, population, and area
 
@@ -88,10 +92,10 @@ A responsive bar chart built with Chart.js that dynamically displays the 10 most
 ### Pie Chart - Countries by Region
 A multi-metric pie chart that illustrates regional distributions across the globe.
 - **Triple Metric Toggle**: Users can switch between three distinct analytical modes using interactive buttons:
-  1. **# Countries**: Shows the raw count of sovereign states per region.
+  1. **Number of countries**: Shows the raw count of sovereign states per region.
   2. **Population**: Shows the total combined population of all countries in a region.
   3. **Area**: Shows the total combined landmass of all countries in a region.
-- **Dynamic Legends**: The legend automatically updates alongside the mode, appending the raw formatted value and the calculated percentage to the label (e.g., `Asia  4.75B (59.2%)`).
+- **Dynamic Legends**: The legend automatically updates alongside the mode, appending the raw formatted value and the calculated percentage to the label (e.g., `Asia  4.75B (59.2%)`). Legend items can also be clicked to hide/show individual slices.
 
 ### Scatter Plot - Population vs Area Analysis
 An advanced linear-scale scatter plot designed to handle extreme data variances without relying on logarithmic distortion.
@@ -106,6 +110,13 @@ A highly interactive, edge-to-edge responsive card grid that displays detailed s
 - **Multi-Directional Sorting**: A dedicated sort dropdown allows explicit Ascending (↑) or Descending (↓) sorting across Name, Population, Area, and Density metrics.
 - **Search & Pagination**: Includes a real-time text search and a "Load More" pagination system to maintain high rendering performance.
 
+### Population Density Trend
+A vertical line chart visualizing population density (people per km²) across countries, sorted from lowest to highest density (left to right).
+- **Region Filtering**: Region filter buttons narrow the dataset to a specific continent, showing all countries in that region.
+- **Global View**: Shows the top 50 most dense countries worldwide for a meaningful comparison.
+- **Color Coding**: The line and fill color matches the selected region's color from the shared `REGION_COLORS` palette.
+- **Rich Tooltips**: Hovering over a point shows the country name, density, population, and area.
+
 ## API Information
 
 Data is fetched from: `https://restcountries.com/v3.1/all?fields=name,population,area,region`
@@ -115,7 +126,3 @@ The API returns:
 - Population figures
 - Land area in km²
 - Geographic region classification
-
-## License
-
-This project is open source and available for educational purposes.
