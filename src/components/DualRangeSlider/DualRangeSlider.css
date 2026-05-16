@@ -1,0 +1,113 @@
+.dual-slider {
+  padding: 10px 0 6px;
+  border-top: 1px solid #334155;
+}
+
+.dual-slider__label {
+  color: #60a5fa;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 8px;
+}
+
+.dual-slider__values {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+
+.dual-slider__value-input {
+  flex: 1;
+  padding: 6px 8px;
+  background: #0f172a;
+  border: 1.5px solid #334155;
+  border-radius: 6px;
+  color: #f1f5f9;
+  font-size: 0.82rem;
+  text-align: center;
+  -moz-appearance: textfield;
+  transition: border-color 0.2s;
+}
+
+.dual-slider__value-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+}
+
+
+
+.dual-slider__sep {
+  color: #64748b;
+  font-weight: 600;
+}
+
+.dual-slider__track-wrap {
+  position: relative;
+  height: 24px;
+  display: flex;
+  align-items: center;
+}
+
+.dual-slider__track {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: #334155;
+  border-radius: 2px;
+}
+
+.dual-slider__fill {
+  position: absolute;
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 2px;
+}
+
+.dual-slider__input {
+  position: absolute;
+  width: 100%;
+  height: 4px;
+  background: transparent;
+  pointer-events: none;
+  -webkit-appearance: none;
+  appearance: none;
+  outline: none;
+  margin: 0;
+}
+
+.dual-slider__input::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 2.5px solid #3b82f6;
+  cursor: pointer;
+  pointer-events: all;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.4);
+  transition: background 0.2s, transform 0.1s;
+}
+
+.dual-slider__input::-webkit-slider-thumb:hover {
+  background: #3b82f6;
+  transform: scale(1.15);
+}
+
+.dual-slider__input::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #1e293b;
+  border: 2.5px solid #3b82f6;
+  cursor: pointer;
+  pointer-events: all;
+}
+
+.dual-slider__input::-webkit-slider-runnable-track,
+.dual-slider__input::-moz-range-track {
+  background: transparent;
+}
